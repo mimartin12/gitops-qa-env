@@ -3,7 +3,7 @@
 name: Deploy (QA)
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       "tag":
         description: "Tag/Version to deploy"
