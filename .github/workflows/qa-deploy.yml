@@ -1,0 +1,78 @@
+---
+
+name: Deploy (QA)
+
+on:
+  workflow_call:
+    inputs:
+      "tag":
+        description: "Tag/Version to deploy"
+        required: true
+        type: string
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.setup.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set tag
+        id: setup
+        run: |
+          if [ -z "${{ inputs.tag }}"]; then
+            echo "::set-output name=tag::${{ inputs.tag }}"
+          else
+            echo "::set-output name=tag::${GITHUB_SHA:0:7}"
+          fi
+
+  pr:
+    name: Deploy PR
+    needs: setup
+    runs-on: ubuntu-latest
+    env: 
+      TAG: ${{ needs.setup.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Create deploy Branch
+        run: git switch -c deploy/${{ env.TAG }}
+
+      - name: Set image version
+        working-directory: app/overlays/qa
+        run: kustomize edit set image nginx=nginx:${{ env.TAG }}
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions
+          author_email: actions@github.com
+          message: 'Update image version to ${{ env.TAG }}'
+
+      - name: Push changes
+        run: git push -u origin deploy/${{ env.TAG }}
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v3
+        id: create-pr
+        with:
+          token: ${{ github.token }}
+          commit-message: "Deploy ${{ $TAG }}"
+          title: "Deploy ${{ $TAG }}"
+          body: "Deploy ${{ $TAG }}"
+          branch: "deploy/${{ $TAG }}"
+          base: "main"
+
+    
