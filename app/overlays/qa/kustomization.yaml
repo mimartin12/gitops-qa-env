@@ -7,4 +7,4 @@ kind: Kustomization
 images:
 - name: nginx
   newName: nginx
-  newTag: 1.14.1
+  newTag: 1.14.0
