@@ -15,32 +15,12 @@ permissions:
   contents: write
 
 jobs:
-  setup:
-    name: Setup
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.setup.outputs.tag }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Set tag
-        id: setup
-        run: |
-          if [ -z "${{ inputs.tag }}" ]; then
-            echo "::set-output name=tag::${{ inputs.tag }}"
-          else
-            echo "::set-output name=tag::${GITHUB_SHA:0:7}"
-          fi
-
   pr:
     name: Deploy PR
     needs: setup
     runs-on: ubuntu-latest
     env: 
-      TAG: ${{ needs.setup.outputs.tag }}
+      TAG: ${{ inputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -54,7 +34,7 @@ jobs:
 
       - name: Set image version
         working-directory: app/overlays/qa
-        run: kustomize edit set image nginx=nginx:${{ env.TAG }}
+        run: kustomize edit set image nginx=nginx:${{ env.TAG }} --stack-trace
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
