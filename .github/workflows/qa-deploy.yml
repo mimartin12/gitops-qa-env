@@ -50,6 +50,5 @@ jobs:
           title: "Deploy ${{ env.TAG }}"
           body: "Deploy ${{ env.TAG }}"
           branch: "deploy/${{ env.TAG }}"
-          base: "main"
 
     
