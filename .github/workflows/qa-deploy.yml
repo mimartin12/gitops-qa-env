@@ -69,10 +69,10 @@ jobs:
         id: create-pr
         with:
           token: ${{ github.token }}
-          commit-message: "Deploy ${{ $TAG }}"
-          title: "Deploy ${{ $TAG }}"
-          body: "Deploy ${{ $TAG }}"
-          branch: "deploy/${{ $TAG }}"
+          commit-message: "Deploy ${{ env.TAG }}"
+          title: "Deploy ${{ env.TAG }}"
+          body: "Deploy ${{ env.TAG }}"
+          branch: "deploy/${{ env.TAG }}"
           base: "main"
 
     
