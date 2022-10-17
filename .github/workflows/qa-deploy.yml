@@ -17,7 +17,6 @@ permissions:
 jobs:
   pr:
     name: Deploy PR
-    needs: setup
     runs-on: ubuntu-latest
     env: 
       TAG: ${{ inputs.tag }}
