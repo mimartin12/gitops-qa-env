@@ -29,7 +29,7 @@ jobs:
       - name: Set tag
         id: setup
         run: |
-          if [ -z "${{ inputs.tag }}"]; then
+          if [ -z "${{ inputs.tag }}" ]; then
             echo "::set-output name=tag::${{ inputs.tag }}"
           else
             echo "::set-output name=tag::${GITHUB_SHA:0:7}"
@@ -48,7 +48,9 @@ jobs:
           fetch-depth: 0
 
       - name: Create deploy Branch
-        run: git switch -c deploy/${{ env.TAG }}
+        run: |
+          git switch -c deploy/${{ env.TAG }}
+          git push -u origin deploy/${{ env.TAG }}
 
       - name: Set image version
         working-directory: app/overlays/qa
@@ -57,12 +59,8 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
-          author_name: GitHub Actions
-          author_email: actions@github.com
+          default_author: github-actions
           message: 'Update image version to ${{ env.TAG }}'
-
-      - name: Push changes
-        run: git push -u origin deploy/${{ env.TAG }}
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v3
