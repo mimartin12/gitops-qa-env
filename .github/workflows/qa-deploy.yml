@@ -41,14 +41,25 @@ jobs:
           default_author: github_actions
           message: 'Update image version to ${{ env.TAG }}'
 
-      - name: Create PR
-        uses: peter-evans/create-pull-request@v3
-        id: create-pr
-        with:
-          token: ${{ github.token }}
-          commit-message: "Deploy ${{ env.TAG }}"
-          title: "Deploy ${{ env.TAG }}"
-          body: "Deploy ${{ env.TAG }}"
-          branch: "deploy/${{ env.TAG }}"
+    
+      - name: Create Version PR
+        env:
+          PR_BRANCH: "deploy/${{ env.TAG }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          BASE_BRANCH: master
+          TITLE: "Bump version to ${{ env.tag }}"
+        run: |
+          gh pr create --title "$TITLE" \
+            --base "$BASE" \
+            --head "$PR_BRANCH" \
+            --body "
+              ## Type of change
+              - [ ] Bug fix
+              - [ ] New feature development
+              - [ ] Tech debt (refactoring, code cleanup, dependency upgrades, etc)
+              - [ ] Build/deploy pipeline (DevOps)
+              - [X] Other
+              ## Objective
+              Automated version bump to ${{ env.tag }}"
 
     
