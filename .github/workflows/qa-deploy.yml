@@ -47,7 +47,7 @@ jobs:
           PR_BRANCH: "deploy/${{ env.TAG }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           BASE_BRANCH: master
-          TITLE: "Bump version to ${{ env.tag }}"
+          TITLE: "Bump version to ${{ env.TAG }}"
         run: |
           gh pr create --title "$TITLE" \
             --base "$BASE" \
@@ -60,7 +60,7 @@ jobs:
               - [ ] Build/deploy pipeline (DevOps)
               - [X] Other
               ## Objective
-              Automated version bump to ${{ env.tag }}"
+              Automated version bump to ${{ env.TAG }}"
 
 
       - name: Find Pull Request
