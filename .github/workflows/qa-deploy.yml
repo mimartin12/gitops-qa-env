@@ -6,20 +6,39 @@ on:
   workflow_dispatch:
     inputs:
       "tag":
-        description: "Tag/Version to deploy"
+        description: "Branch name to deploy (example: 'main')"
         required: true
         type: string
+        default: main
 
 permissions:
   pull-requests: write
   contents: write
 
 jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      SHA: ${{ steps.setup.outputs.tag }}
+    steps:
+
+      - name: Get branch commit
+        id: setup
+        run: |
+          COMMIT=$(
+            curl -s https://api.github.com/repos/${{ github.repository }}/commits?sha=${{ github.event.inputs.tag }} \
+            | jq -r '.[0].sha'
+          )
+          echo "::set-output name=commit::${COMMIT:0:7}"
+
   pr:
     name: Deploy PR
     runs-on: ubuntu-latest
+    needs:
+      - setup
     env: 
-      TAG: ${{ inputs.tag }}
+      TAG: ${{ needs.setup.outputs.SHA }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
