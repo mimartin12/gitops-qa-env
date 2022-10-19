@@ -20,7 +20,7 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      SHA: ${{ steps.setup.outputs.tag }}
+      SHA: ${{ steps.setup.outputs.commit }}
     steps:
 
       - name: Get branch commit
