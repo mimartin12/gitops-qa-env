@@ -1,0 +1,26 @@
+---
+
+name: Build and Tag
+
+on:
+ push: {}
+
+jobs:
+  tag:
+    name: Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Pull nginx
+        run: docker pull nginx:latest
+
+      - name: Tag
+        run: |
+          TAG=$(git rev-parse --short HEAD)
+          docker tag nginx:latest nginx:$TAG
+
+          echo "POC: docker push nginx:$TAG"
