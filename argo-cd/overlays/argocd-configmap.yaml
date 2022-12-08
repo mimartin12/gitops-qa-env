@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  repositories: |
+    - name: gitops-qa-env
+      url: git@github.com:mimartin12/gitops-qa-env.git
+      type: git
+      sshPrivateKeySecret:
+        name: repo-creds
+        key: sshPrivateKey
+  configManagementPlugins: |
+    - name: kustomized-helm
+      generate:
+        command: [sh, -c]
+        args: ["kustomize build --enable-helm"]
