@@ -5,6 +5,7 @@ namespace: argocd
 
 resources:
   - base/namespace.yaml
+  - base/ingress.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.4/manifests/install.yaml
   - base/argocd-secret-repoprivatekey.yaml
   - base/argocd-application.yaml
